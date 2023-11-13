@@ -1,0 +1,5 @@
+
+# Dossiers générés par Python
+__pycache__/
+*.pyc
+~$*
