@@ -10,7 +10,6 @@ COLORS = {
     "green": "green",
     "red": "red",
     "yellow": "orange",
-    "violet": "darkpurple",
 }
 params = {
     "location": "sans numéro de rue",  # sans numéro de rue ou 'bureau de poste le plus proche"
@@ -69,7 +68,7 @@ parser.add_argument(
 parser.add_argument(
     "--output",
     dest="html_output_file",
-    default="carte_contact.html",
+    default="carte_contacts.html",
     help="Fichier html de sortie contenant la carte",
 )
 
@@ -112,14 +111,21 @@ for index, row in df.iterrows():
     icon = None
     if row["groupe"] == "Lutin":
         icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="hippo")
+        if row["parent"] == "Repons":
+            icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="ghost")
+
     elif row["groupe"] == "Louveteau":
         icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="cat")
+        if row["parent"] == "Repons":
+            icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="ghost")
     elif row["groupe"] == "Eclai.es":
         icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="paw")
+        if row["parent"] == "Repons":
+            icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="ghost")
     elif row["groupe"] == "Aines":
         icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="rocket")
-    elif row["groupe"] == "Repons":
-        icon = folium.Icon(color=COLORS["violet"], prefix="fa", icon="ghost")
+        if row["parent"] == "Repons":
+            icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="ghost")
     else:
         icon = folium.Icon(color=COLORS["red"], icon="info-sign")
     marker = folium.Marker(

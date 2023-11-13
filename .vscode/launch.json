@@ -9,6 +9,10 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
+            "args": [
+                "--input",
+                "list.xlsx"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         }
