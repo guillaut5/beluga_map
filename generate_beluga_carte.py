@@ -1,9 +1,10 @@
 import folium
 import pandas as pd
-from waze_route_calculator import WazeRouteCalculator
+from adress_utils import AdressUtils
 import requests
 from folium.plugins import Search
 import argparse
+import random
 
 COLORS = {
     "blue": "blue",
@@ -11,48 +12,6 @@ COLORS = {
     "red": "red",
     "yellow": "orange",
 }
-params = {
-    "location": "sans numéro de rue",  # sans numéro de rue ou 'bureau de poste le plus proche"
-}
-
-
-def get_official_adress_from_coordinates(lat, long):
-    # check l'adresse officielle sur le site du gouvernement
-    URL_GOUV = (
-        "https://api-adresse.data.gouv.fr/reverse/?lon=%f&lat=%f&type=street&limit=1"
-        % (long, lat)
-    )
-    response = requests.get(URL_GOUV)
-    # retourne un truc comme ca
-    # {"type":"FeatureCollection","version":"draft","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[3.876086,43.611302]},"properties":{"label":"Place Chabaneau 34000 Montpellier","score":0.9999999481017439,"id":"34172_1170","name":"Place Chabaneau","postcode":"34000","citycode":"34172","x":770745.31,"y":6279531.37,"city":"Montpellier","context":"34, Hérault, Occitanie","type":"street","importance":0.67279,"street":"Place Chabaneau","distance":11}}],"attribution":"BAN","licence":"ETALAB-2.0","filters":{"type":"street"},"center":[3.8761,43.6112],"limit":1}
-
-    if response.status_code == 200:
-        data = response.json()
-        return data["features"][0]["properties"]["label"]
-    return None
-
-
-def get_coordinates(address):
-    """get les coordonnées lat/long en fonction de l'adresse par waze (l'api de laposte fonctionne moins
-    bien. elle est beaucoup moins tolérante sur l'exactitude de l'adresse)"""
-    waze = WazeRouteCalculator()
-    location_dict = waze.address_to_coords(address)
-    lat = location_dict["lat"]
-    long = location_dict["lon"]
-    print("- traite  l'adresse '%s'" % address)
-    if location_dict:
-        if params["location"] == "sans numéro de rue":
-            return [lat, long]
-        elif params["location"] == "bureau de poste le plus proche":
-            official_adresse = get_official_adress_from_coordinates(lat, long)
-            # le api de la poste ne fonctionne pas bien
-            # lat,long = get_nearest_post_office(official_adresse)
-            return [lat, long]
-        else:
-            return [lat, long]
-    else:
-        return [43.6109, 3.8772]
-
 
 parser = argparse.ArgumentParser(
     description="Generateur de la carte des contacts Beluga, pour faciliter les mises en relation covoiturage."
@@ -86,10 +45,7 @@ print("Lecture de %d contacts" % len(df.index))
 m = folium.Map(location=[43.6109, 3.8772], zoom_start=11)
 
 # Ajouter un titre à la carte
-title_html = (
-    '<h3 align="center" style="font-size:20px"><b>Beluga ! </b> adresse %s</h3>'
-    % params["location"]
-)
+title_html = '<h3 align="center" style="font-size:20px"><b>Beluga ! </b> les adresses sont floutées, sans numéro de rue</h3>'
 m.get_root().html.add_child(folium.Element(title_html))
 
 # creation des layers
@@ -97,14 +53,13 @@ lutin_group = folium.FeatureGroup(name="Lutin")
 louveteau_group = folium.FeatureGroup(name="Louveteau")
 eclai_group = folium.FeatureGroup(name="Eclai.es")
 aines_group = folium.FeatureGroup(name="Aines")
-respons_group = folium.FeatureGroup(name="Respons")
 
 m.add_child(lutin_group)
 m.add_child(louveteau_group)
 m.add_child(eclai_group)
 m.add_child(aines_group)
-m.add_child(respons_group)
 
+adress_utils = AdressUtils()
 # Ajouter des marqueurs pour chaque enfant
 for index, row in df.iterrows():
     popup_content = f"<H3>{row['enfant']}</H3> <h4> 0{row['contact']} </h4> <h5>{row['email']} </h5> <p> {row['parent']}</p>"
@@ -129,7 +84,7 @@ for index, row in df.iterrows():
     else:
         icon = folium.Icon(color=COLORS["red"], icon="info-sign")
     marker = folium.Marker(
-        location=get_coordinates(
+        location=adress_utils.get_coordinates(
             row["adresse floute"]
         ),  # Vous devez remplacer ces coordonnées par celles de chaque lieu de rencontre
         popup=folium.Popup(popup_content, max_width=300),
@@ -146,8 +101,6 @@ for index, row in df.iterrows():
         marker.add_to(eclai_group)
     elif df["groupe"][index] == "Aines":
         marker.add_to(aines_group)
-    elif df["groupe"][index] == "Respons":
-        marker.add_to(respons_group)
 
 # ajout du layer control
 folium.LayerControl().add_to(m)
