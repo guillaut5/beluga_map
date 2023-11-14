@@ -5,6 +5,7 @@ import requests
 from folium.plugins import Search
 import argparse
 import random
+import io
 
 COLORS = {
     "blue": "blue",
@@ -66,20 +67,20 @@ for index, row in df.iterrows():
     icon = None
     if row["groupe"] == "Lutin":
         icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="hippo")
-        if row["parent"] == "Repons":
+        if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="ghost")
 
     elif row["groupe"] == "Louveteau":
         icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="cat")
-        if row["parent"] == "Repons":
+        if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="ghost")
     elif row["groupe"] == "Eclai.es":
         icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="paw")
-        if row["parent"] == "Repons":
+        if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="ghost")
     elif row["groupe"] == "Aines":
         icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="rocket")
-        if row["parent"] == "Repons":
+        if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="ghost")
     else:
         icon = folium.Icon(color=COLORS["red"], icon="info-sign")
@@ -106,7 +107,12 @@ for index, row in df.iterrows():
 folium.LayerControl().add_to(m)
 
 # Sauvegarder la carte au format HTML
-m.save(args.html_output_file)
+# Convertir la carte en HTML
+html_content = m._repr_html_()
+
+# Enregistrement de la carte en UTF-8
+with io.open(args.html_output_file, "w", encoding="utf-8") as f:
+    f.write(html_content)
 print("")
 print("Fichier '%s' generé." % args.html_output_file)
 print("Terminé")
