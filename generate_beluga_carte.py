@@ -50,10 +50,10 @@ title_html = '<h3 align="center" style="font-size:20px"><b>Beluga ! </b> les adr
 m.get_root().html.add_child(folium.Element(title_html))
 
 # creation des layers
-lutin_group = folium.FeatureGroup(name="Lutin")
-louveteau_group = folium.FeatureGroup(name="Louveteau")
+lutin_group = folium.FeatureGroup(name="Lutin.es")
+louveteau_group = folium.FeatureGroup(name="Louveteaux.ettes")
 eclai_group = folium.FeatureGroup(name="Eclai.es")
-aines_group = folium.FeatureGroup(name="Aines")
+aines_group = folium.FeatureGroup(name="Aine.es")
 
 m.add_child(lutin_group)
 m.add_child(louveteau_group)
@@ -65,20 +65,20 @@ adress_utils = AdressUtils()
 for index, row in df.iterrows():
     popup_content = f"<H3>{row['enfant']}</H3> <h4> 0{row['contact']} </h4> <h5>{row['email']} </h5> <p> {row['parent']}</p>"
     icon = None
-    if row["groupe"] == "Lutin":
-        icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="hippo")
+    if row["groupe"] == "Lutin.es":
+        icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="hat-wizard")
         if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["blue"], prefix="fa", icon="ghost")
 
-    elif row["groupe"] == "Louveteau":
-        icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="cat")
+    elif row["groupe"] == "Louveteaux.ettes":
+        icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="paw")
         if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["yellow"], prefix="fa", icon="ghost")
     elif row["groupe"] == "Eclai.es":
-        icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="paw")
+        icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="face-laugh-squint")
         if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["green"], prefix="fa", icon="ghost")
-    elif row["groupe"] == "Aines":
+    elif row["groupe"] == "Aine.es":
         icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="rocket")
         if row["parent"] == "Respons":
             icon = folium.Icon(color=COLORS["red"], prefix="fa", icon="ghost")
@@ -94,25 +94,23 @@ for index, row in df.iterrows():
     ).add_to(m)
 
     # Ajouter le marqueur au groupe approprié
-    if df["groupe"][index] == "Lutin":
+    if df["groupe"][index] == "Lutin.es":
         marker.add_to(lutin_group)
-    elif df["groupe"][index] == "Louveteau":
+    elif df["groupe"][index] == "Louveteaux.ettes":
         marker.add_to(louveteau_group)
     elif df["groupe"][index] == "Eclai.es":
         marker.add_to(eclai_group)
-    elif df["groupe"][index] == "Aines":
+    elif df["groupe"][index] == "Aine.es":
         marker.add_to(aines_group)
 
 # ajout du layer control
 folium.LayerControl().add_to(m)
 
+
 # Sauvegarder la carte au format HTML
 # Convertir la carte en HTML
-html_content = m._repr_html_()
+m.save(args.html_output_file)
 
-# Enregistrement de la carte en UTF-8
-with io.open(args.html_output_file, "w", encoding="utf-8") as f:
-    f.write(html_content)
 print("")
 print("Fichier '%s' generé." % args.html_output_file)
 print("Terminé")
