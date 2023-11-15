@@ -1,8 +1,30 @@
 # beluga_map
-generateur de carte pour beluga
+
+Script Python pour générer une carte interactive des contacts Beluga, facilitant les mises en relation covoiturage.
+Le script prend des données de contacts à partir d'un fichier Excel, organise les informations par groupe et génère une carte Folium.
+Les marqueurs sur la carte représentent chaque contact avec des icônes colorées en fonction du groupe auquel ils appartiennent.
+
+## Utilisation:
+1. Assurez-vous d'avoir les bibliothèques requises installées en exécutant :
+   pip install folium pandas
+
+2. Exécutez le script depuis la ligne de commande avec les options suivantes :
+   python script.py --input fichier_contacts.xlsx --output carte_contacts.html
+
+   Options:
+   --input : Spécifie le fichier Excel contenant les données de contacts (par défaut: exemple_contacts.xlsx).
+   --output : Spécifie le nom du fichier HTML de sortie contenant la carte (par défaut: carte_contacts.html).
+
+3. La carte générée est sauvegardée dans le fichier HTML spécifié et peut être ouverte dans un navigateur web.
+   Elle affiche les contacts organisés par groupes avec des informations détaillées dans les popups des marqueurs.
+
+## Note:
+- Les adresses sont floutées, et les icônes des marqueurs varient en fonction du groupe et du rôle du parent.
+- Les coordonnées doivent être adaptées à chaque lieu de rencontre.
+- Les groupes sont organisés en couches pour permettre à l'utilisateur de choisir quels groupes afficher sur la carte.
 
 
-##  fichier en entrée
+##  format du fichier excel en entrée
 Utilise en input un fichier excel qui contient les colonnes suivante
 ```
 enfant	groupe	parent	contact	lieux de rencontre	adresse 	adresse floute	email
