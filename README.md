@@ -9,12 +9,14 @@ Les marqueurs sur la carte représentent chaque contact avec des icônes coloré
    pip install folium pandas
 
 2. Exécutez le script depuis la ligne de commande avec les options suivantes :
+  ```
    python script.py --input fichier_contacts.xlsx --output carte_contacts.html
-
+  ```
    Options:
+   ```
    --input : Spécifie le fichier Excel contenant les données de contacts (par défaut: exemple_contacts.xlsx).
    --output : Spécifie le nom du fichier HTML de sortie contenant la carte (par défaut: carte_contacts.html).
-
+  ```
 3. La carte générée est sauvegardée dans le fichier HTML spécifié et peut être ouverte dans un navigateur web.
    Elle affiche les contacts organisés par groupes avec des informations détaillées dans les popups des marqueurs.
 
